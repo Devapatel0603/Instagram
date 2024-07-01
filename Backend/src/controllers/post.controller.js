@@ -281,7 +281,10 @@ export const addSavedPost = asyncHandler(async (req, res) => {
         user: user._id,
     }).select("+followers");
 
-    if (!user_follower.followers.includes(req.user._id)) {
+    if (
+        post.user.toString() !== req.user._id.toString() &&
+        !user_follower.followers.includes(req.user._id)
+    ) {
         if (user.is_private_account) {
             return responseHandler(res, 403, "Sorry, this account is private");
         }
@@ -290,12 +293,21 @@ export const addSavedPost = asyncHandler(async (req, res) => {
     savedPosts.posts.push(req.params._id);
     await savedPosts.save();
 
-    return responseHandler(res, 200, "This post saved successfully");
+    return responseHandler(res, 200, "This post saved successfully", post);
 });
 
 //Get Saved Posts
 export const getSavedPosts = asyncHandler(async (req, res) => {
-    const user_saved_posts = await SavedPosts.findOne({ user: req.user._id });
+    const user_saved_posts = await SavedPosts.findOne({
+        user: req.user._id,
+    }).populate({
+        path: "posts",
+        select: "user urls no_of_likes likes comments caption",
+        populate: {
+            path: "user",
+            select: "_id username name is_private_account profile_img",
+        },
+    });
 
     if (!user_saved_posts) {
         throw new ErrorHandler(404, "Please, provide correct user id");

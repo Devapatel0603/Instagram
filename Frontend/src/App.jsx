@@ -19,14 +19,13 @@ import Notifications from "./routes/Notifications";
 import DefaultMessagePage from "./components/DefaultMessagePage/DefaultMessagePage";
 import Chats from "./components/Chats/Chats";
 import { MyContext } from "./context/MyContext";
-import { SocketContext, SocketProvider } from "./socket.io";
+import { SocketContext } from "./socket.io";
 import { setAllChats } from "./redux/slices/chat.slice";
+import { useAsyncEffect } from "react-dynamic-hooks";
 
 function App() {
     const dispatch = useDispatch();
-
     const [loading, setLoading] = useState(true);
-
     const { user } = useSelector((state) => state.user);
     const { page } = useSelector((state) => state.posts);
     const { isChatCreated, allChats } = useSelector((state) => state.chat);
@@ -35,40 +34,46 @@ function App() {
         getSuggetions,
         getFollowRequests,
         getUserDetails,
-        savedPosts,
+        getSavedPosts,
         getCurrentUserPosts,
         fetchPosts,
         getChats,
     } = useContext(MyContext);
 
-    useEffect(() => {
-        getUserDetails(setLoading);
+    // Using custom async effect hook
+    useAsyncEffect(async () => {
+        await getUserDetails(setLoading);
     }, []);
 
-    useEffect(() => {
+    useAsyncEffect(async () => {
         if (user && user._id) {
-            savedPosts();
-            getCurrentUserPosts();
-            getFollowRequests();
-            getSuggetions();
+            await getSavedPosts();
+            await getCurrentUserPosts();
+            await getFollowRequests();
+            await getSuggetions();
         }
     }, [user]);
 
-    useEffect(() => {
+    useAsyncEffect(async () => {
         if (user && user._id) {
-            fetchPosts();
+            await fetchPosts();
         }
     }, [user, page]);
 
     useEffect(() => {
-        if (user && user._id) {
-            getChats();
-        }
+        const fetchChats = async () => {
+            if (user && user._id) {
+                await getChats();
+            }
+        };
+
+        fetchChats();
     }, [user, isChatCreated]);
 
     const socket = useContext(SocketContext);
+
     useEffect(() => {
-        socket.on("NEW_MESSAGE_ALERT", (data) => {
+        const handleMessageAlert = (data) => {
             const chatId = data.chatId;
             const latestChat = allChats.find(
                 (chat) => chat._id.toString() === chatId
@@ -82,10 +87,12 @@ function App() {
                 ];
                 dispatch(setAllChats(updatedAllChats));
             }
-        });
+        };
+
+        socket.on("NEW_MESSAGE_ALERT", handleMessageAlert);
 
         return () => {
-            socket.off("NEW_MESSAGE_ALERT");
+            socket.off("NEW_MESSAGE_ALERT", handleMessageAlert);
         };
     }, [socket, dispatch, allChats]);
 
@@ -94,136 +101,118 @@ function App() {
             {loading ? (
                 <StartingLoader />
             ) : (
-                <>
-                    <div className="h-min-dvh bg-black overflow-y-hidden">
-                        {user && <Header />}
-                        {user && <LeftSideNavbarComponent />}
-                        <Routes>
+                <div className="h-min-dvh bg-black overflow-y-hidden">
+                    {user && <Header />}
+                    {user && <LeftSideNavbarComponent />}
+                    <Routes>
+                        <Route path="/" element={user ? <Home /> : <Login />} />
+                        <Route
+                            path="home"
+                            element={
+                                user ? (
+                                    <Home />
+                                ) : (
+                                    <Navigate to="/" replace={true} />
+                                )
+                            }
+                        />
+                        <Route
+                            path="explore"
+                            element={
+                                user ? (
+                                    <Explore />
+                                ) : (
+                                    <Navigate to="/" replace={true} />
+                                )
+                            }
+                        />
+                        <Route
+                            path="reels"
+                            element={
+                                user ? (
+                                    <Reels />
+                                ) : (
+                                    <Navigate to="/" replace={true} />
+                                )
+                            }
+                        />
+                        <Route
+                            path="messages"
+                            element={
+                                user ? (
+                                    <Messages />
+                                ) : (
+                                    <Navigate to="/" replace={true} />
+                                )
+                            }
+                        >
+                            <Route path="" element={<DefaultMessagePage />} />
+                            <Route path=":_id" element={<Chats />} />
+                        </Route>
+                        <Route
+                            path="notifications"
+                            element={
+                                user ? (
+                                    <Notifications />
+                                ) : (
+                                    <Navigate to="/" replace={true} />
+                                )
+                            }
+                        />
+                        <Route
+                            path="create"
+                            element={
+                                user ? (
+                                    <Create />
+                                ) : (
+                                    <Navigate to="/" replace={true} />
+                                )
+                            }
+                        />
+                        {user && (
                             <Route
-                                path="/"
-                                element={user ? <Home /> : <Login />}
-                            />
-                            <Route
-                                path="home"
+                                path=":username"
                                 element={
                                     user ? (
-                                        <Home />
-                                    ) : (
-                                        <Navigate to="/" replace={true} />
-                                    )
-                                }
-                            />
-                            <Route
-                                path="explore"
-                                element={
-                                    user ? (
-                                        <Explore />
-                                    ) : (
-                                        <Navigate to="/" replace={true} />
-                                    )
-                                }
-                            />
-                            <Route
-                                path="reels"
-                                element={
-                                    user ? (
-                                        <Reels />
-                                    ) : (
-                                        <Navigate to="/" replace={true} />
-                                    )
-                                }
-                            />
-
-                            <Route
-                                path="messages"
-                                element={
-                                    user ? (
-                                        <Messages />
+                                        <Profile />
                                     ) : (
                                         <Navigate to="/" replace={true} />
                                     )
                                 }
                             >
+                                <Route path="" element={<ProfilePost />} />
                                 <Route
-                                    path=""
-                                    element={<DefaultMessagePage />}
+                                    path="saved"
+                                    element={<ProfileSaved />}
                                 />
-                                <Route path=":_id" element={<Chats />} />
+                                <Route
+                                    path="tagged"
+                                    element={<ProfileTagged />}
+                                />
                             </Route>
-                            <Route
-                                path="notifications"
-                                element={
-                                    user ? (
-                                        <Notifications />
-                                    ) : (
-                                        <Navigate to="/" replace={true} />
-                                    )
-                                }
-                            />
-
-                            <Route
-                                path="create"
-                                element={
-                                    user ? (
-                                        <Create />
-                                    ) : (
-                                        <Navigate to="/" replace={true} />
-                                    )
-                                }
-                            />
-                            {user && (
-                                <>
-                                    <Route
-                                        path=":username"
-                                        element={
-                                            user ? (
-                                                <Profile />
-                                            ) : (
-                                                <Navigate
-                                                    to="/"
-                                                    replace={true}
-                                                />
-                                            )
-                                        }
-                                    >
-                                        <Route
-                                            path=""
-                                            element={<ProfilePost />}
-                                        />
-                                        <Route
-                                            path="saved"
-                                            element={<ProfileSaved />}
-                                        />
-                                        <Route
-                                            path="tagged"
-                                            element={<ProfileTagged />}
-                                        />
-                                    </Route>
-                                </>
-                            )}
-                            <Route
-                                path="register"
-                                element={
-                                    !user ? (
-                                        <Register />
-                                    ) : (
-                                        <Navigate to="/" replace={true} />
-                                    )
-                                }
-                            />
-                            <Route
-                                path="login"
-                                element={
-                                    !user ? (
-                                        <Login />
-                                    ) : (
-                                        <Navigate to="/" replace={true} />
-                                    )
-                                }
-                            />
-                        </Routes>
-                    </div>
-                </>
+                        )}
+                        <Route
+                            path="register"
+                            element={
+                                !user ? (
+                                    <Register />
+                                ) : (
+                                    <Navigate to="/" replace={true} />
+                                )
+                            }
+                        />
+                        <Route
+                            path="login"
+                            element={
+                                !user ? (
+                                    <Login />
+                                ) : (
+                                    <Navigate to="/" replace={true} />
+                                )
+                            }
+                        />
+                    </Routes>
+                </div>
             )}
         </>
     );

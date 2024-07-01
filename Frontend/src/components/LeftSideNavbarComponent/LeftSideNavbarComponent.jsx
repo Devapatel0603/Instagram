@@ -105,13 +105,13 @@ const LeftSideNavbarComponent = () => {
             to: user.username,
             icon: "",
             hoverIcon: "",
-            image: profileImage,
+            image: user.profile_img,
         },
     ];
 
     return (
         <>
-            <div className="leftSideNavbar bg-black border-[rgb(54,54,54)] flex-col h-dvh fixed left-0 top-0 items-center border-r-[0.4px] min-w-0 pt-10 hidden md:flex">
+            <div className="leftSideNavbar bg-black border-[rgb(54,54,54)] flex-col h-dvh fixed left-0 top-0 items-center border-r-[0.4px] min-w-0 pt-10 hidden md:flex z-10">
                 {!currentPath.includes("/messages") && (
                     <>
                         <div className="instaSVG w-full hidden justify-center min-[1200px]:flex text-white">
@@ -174,7 +174,7 @@ const LeftSideNavbarComponent = () => {
                     {mobileIcons.map((ni) => (
                         <NavLink
                             key={ni.name}
-                            to={`/${ni.name.toLowerCase()}`}
+                            to={`/${ni.to}`}
                             className="w-full flex justify-center"
                         >
                             {({ isActive }) => (

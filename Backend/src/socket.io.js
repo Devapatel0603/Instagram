@@ -46,7 +46,6 @@ io.on("connection", (socket) => {
         console.log("NEW_ATTACHMENTS event received");
     });
 
-    //To Send Messages
     socket.on("JOIN_CHAT", ({ userId, chatId }) => {
         socket.join(chatId);
         console.log("Join chat executed");

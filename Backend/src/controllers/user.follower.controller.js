@@ -167,49 +167,74 @@ export const cancelFriendRequest = asyncHandler(async (req, res) => {
 
 //Get 5 following Suggetion
 export const getFollowingSuggetions = asyncHandler(async (req, res) => {
-    const current_user = await UserFollower.findOne({
-        user: req.user._id,
-    }).select("+following +follow_requests");
+    try {
+        const currentUser = await UserFollower.findOne({
+            user: req.user._id,
+        }).select("+following +follow_requests");
 
-    const users = await User.aggregate([
-        {
-            $match: {
-                _id: {
-                    $nin: [
-                        ...current_user.following,
-                        ...current_user.follow_requests,
-                        req.user._id,
-                    ],
+        if (!currentUser) {
+            return responseHandler(res, 404, "Current user not found");
+        }
+
+        const users = await UserFollower.aggregate([
+            {
+                $match: {
+                    user: {
+                        $nin: [
+                            ...currentUser.following,
+                            ...currentUser.follow_requests,
+                            req.user._id,
+                        ],
+                    },
                 },
             },
-        },
-        { $sample: { size: 5 } },
-        {
-            $project: {
-                password: 0,
-                __v: 0,
-                email: 0,
-                phone_no: 0,
-                password_reset_token: 0,
-                password_reset_expires: 0,
-                fetchedPostIds: 0,
-                fetchedFollowingPostIds: 0,
+            { $sample: { size: 10 } },
+            {
+                $project: {
+                    follow_requests: 1,
+                    user: 1,
+                    _id: 1,
+                },
             },
-        },
-    ]);
+        ]);
 
-    const uniqueUsers = users.filter(
-        (user, index, self) =>
-            self.findIndex((u) => u._id.toString() === user._id.toString()) ===
-            index
-    );
+        // Populate the user details for each user in the suggestions
+        const populatedUsers = await UserFollower.populate(users, {
+            path: "user",
+            select: "name username email profile_img",
+        });
 
-    responseHandler(
-        res,
-        200,
-        "Users suggetions sent successfully",
-        uniqueUsers
-    );
+        // Filter out duplicate users
+        let uniqueUsers = populatedUsers.filter(
+            (user, index, self) =>
+                self.findIndex(
+                    (u) => u.user._id.toString() === user.user._id.toString()
+                ) === index
+        );
+
+        uniqueUsers = uniqueUsers.map((user) => {
+            const requested = user.follow_requests
+                .map((id) => id.toString())
+                .includes(req.user._id.toString());
+            return {
+                ...user,
+                requested,
+            };
+        });
+
+        console.log(uniqueUsers);
+
+        // Send the response
+        responseHandler(
+            res,
+            200,
+            "User suggestions sent successfully",
+            uniqueUsers
+        );
+    } catch (error) {
+        console.error("Error getting following suggestions:", error);
+        responseHandler(res, 500, "Internal Server Error");
+    }
 });
 
 //Accept Follow Request

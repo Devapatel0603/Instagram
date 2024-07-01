@@ -32,10 +32,13 @@ export const MyContextProvider = ({ children }) => {
     const dispatch = useDispatch();
 
     const { otherUser, user } = useSelector((state) => state.user);
-    const { noOfLikes, page } = useSelector((state) => state.posts);
+    const { page, currentUserPosts, userPosts, savedPosts } = useSelector(
+        (state) => state.posts
+    );
     const { isChatCreated, messagePage } = useSelector((state) => state.chat);
 
     const [dialogBox, setDialogBox] = useState(false);
+    const [postDialogBox, setPostDialogBox] = useState(false);
 
     //Get current user data
     const getUserDetails = async (setLoading) => {
@@ -60,15 +63,15 @@ export const MyContextProvider = ({ children }) => {
     const getCurrentUserPosts = async () => {
         try {
             const res = await axios.get(
-                `${import.meta.env.VITE_BACKEND_URL}/posts/get/other/posts/${
-                    user._id
-                }`,
+                `${import.meta.env.VITE_BACKEND_URL}/posts/get/user/posts`,
                 { withCredentials: true }
             );
             if (res.status === 200) {
-                dispatch(setCurrentUserPosts(res.data.posts));
+                dispatch(setCurrentUserPosts(res.data.data));
             }
-        } catch (error) {}
+        } catch (error) {
+            toast.error("Error in Posts fetching");
+        }
     };
 
     //Get other user data
@@ -130,7 +133,46 @@ export const MyContextProvider = ({ children }) => {
                 `${import.meta.env.VITE_BACKEND_URL}/posts/add/like/${_id}`,
                 { withCredentials: true }
             );
-            dispatch(setNoOfLikes({ [_id]: noOfLikes[_id] + 1 }));
+            if (res.status === 200) {
+                if (
+                    currentUserPosts.find(
+                        (post) => post._id.toString() === _id.toString()
+                    )
+                ) {
+                    const newCurrentUserPosts = currentUserPosts.map((post) =>
+                        post._id.toString() === _id.toString()
+                            ? res.data.data
+                            : post
+                    );
+                    dispatch(setCurrentUserPosts(newCurrentUserPosts));
+                } else if (
+                    userPosts.find(
+                        (post) => post._id.toString() === _id.toString()
+                    )
+                ) {
+                    const newUserPosts = userPosts.map((post) =>
+                        post._id.toString() === _id.toString()
+                            ? res.data.data
+                            : post
+                    );
+                    dispatch(setUserPosts(newUserPosts));
+                }
+                if (
+                    savedPosts.find(
+                        (post) => post._id.toString() === _id.toString()
+                    )
+                ) {
+                    const newSavedPosts = savedPosts.map((post) =>
+                        post._id.toString() === _id.toString()
+                            ? res.data.data
+                            : post
+                    );
+                    console.log(savedPosts);
+                    console.log(newSavedPosts);
+                    dispatch(setSavedPosts(newSavedPosts));
+                    console.log(savedPosts);
+                }
+            }
         } catch (error) {
             console.log(error);
         }
@@ -143,20 +185,56 @@ export const MyContextProvider = ({ children }) => {
                 `${import.meta.env.VITE_BACKEND_URL}/posts/remove/like/${_id}`,
                 { withCredentials: true }
             );
-            dispatch(setNoOfLikes({ [_id]: noOfLikes[_id] - 1 }));
+            if (res.status === 200) {
+                if (
+                    currentUserPosts.find(
+                        (post) => post._id.toString() === _id.toString()
+                    )
+                ) {
+                    const newCurrentUserPosts = currentUserPosts.map((post) =>
+                        post._id.toString() === _id.toString()
+                            ? res.data.data
+                            : post
+                    );
+                    dispatch(setCurrentUserPosts(newCurrentUserPosts));
+                } else if (
+                    userPosts.find(
+                        (post) => post._id.toString() === _id.toString()
+                    )
+                ) {
+                    const newUserPosts = userPosts.map((post) =>
+                        post._id.toString() === _id.toString()
+                            ? res.data.data
+                            : post
+                    );
+                    dispatch(setUserPosts(newUserPosts));
+                }
+                if (
+                    Array.isArray(savedPosts) &&
+                    savedPosts.find(
+                        (post) => post._id.toString() === _id.toString()
+                    )
+                ) {
+                    const newSavedPosts = savedPosts.map((post) =>
+                        post._id.toString() === _id.toString()
+                            ? res.data.data
+                            : post
+                    );
+                    dispatch(setSavedPosts(newSavedPosts));
+                }
+            }
         } catch (error) {
             console.log(error);
         }
     };
 
     //Get Saved Posts
-    const savedPosts = async () => {
+    const getSavedPosts = async () => {
         try {
             const res = await axios.get(
                 `${import.meta.env.VITE_BACKEND_URL}/posts/get/saved/posts`,
                 { withCredentials: true }
             );
-
             if (res.status === 200) {
                 dispatch(setSavedPosts(res.data.data));
             }
@@ -175,7 +253,7 @@ export const MyContextProvider = ({ children }) => {
                 { withCredentials: true }
             );
             if (res.status === 200) {
-                dispatch(setSavedPosts(_id));
+                dispatch(setSavedPosts(res.data.data));
             }
         } catch (error) {
             console.log(error);
@@ -325,38 +403,40 @@ export const MyContextProvider = ({ children }) => {
 
     //Get Messages
     const getMessages = async (_id, initialLoad = false) => {
-        // try {
-        //     const res = await axios.get(
-        //         `${
-        //             import.meta.env.VITE_BACKEND_URL
-        //         }/chats/get/messages/${_id}?page=${messagePage}`,
-        //         { withCredentials: true }
-        //     );
-        //     if (res.status === 200) {
-        //         if (initialLoad) {
-        //             dispatch(setMessages(res.data.data));
-        //         } else {
-        //             dispatch(addMessages(res.data.data));
-        //         }
-        //         dispatch(setMessagePage(page));
-        //         if (!initialLoad) {
-        //             // Adjust the scroll position to maintain user's view
-        //             const newHeight = scrollMessageRef.current.scrollHeight;
-        //             scrollMessageRef.current.scrollTop =
-        //                 newHeight - previousHeightRef.current;
-        //             loadingMoreRef.current = false; // Reset loading flag
-        //         }
-        //     }
-        // } catch (error) {
-        //     console.log(error);
-        // }
+        try {
+            const res = await axios.get(
+                `${
+                    import.meta.env.VITE_BACKEND_URL
+                }/chats/get/messages/${_id}?page=${messagePage}`,
+                { withCredentials: true }
+            );
+            if (res.status === 200) {
+                if (initialLoad) {
+                    dispatch(setMessages(res.data.data));
+                } else {
+                    dispatch(addMessages(res.data.data));
+                }
+                dispatch(setMessagePage(page));
+                if (!initialLoad) {
+                    // Adjust the scroll position to maintain user's view
+                    const newHeight = scrollMessageRef.current.scrollHeight;
+                    scrollMessageRef.current.scrollTop =
+                        newHeight - previousHeightRef.current;
+                    loadingMoreRef.current = false; // Reset loading flag
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
         <MyContext.Provider
             value={{
+                postDialogBox,
                 isChatCreated,
                 dialogBox,
+                setPostDialogBox,
                 getMessages,
                 handleFollow,
                 handleCancelFriendRequest,
@@ -372,7 +452,7 @@ export const MyContextProvider = ({ children }) => {
                 fetchPosts,
                 addLike,
                 removeLike,
-                savedPosts,
+                getSavedPosts,
                 addSaved,
                 removeSaved,
             }}

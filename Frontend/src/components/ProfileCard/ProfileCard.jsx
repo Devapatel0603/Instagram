@@ -1,11 +1,19 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import Image from "../Image/Image";
 import { NavLink } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { MyContext } from "../../context/MyContext";
+import { setRequestSent } from "../../redux/slices/user.slice";
 
-const ProfileCard = ({ link, user, follow }) => {
+const ProfileCard = ({ link, user, follow, requested }) => {
     const { requestSent } = useSelector((state) => state.user);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (requested) {
+            dispatch(setRequestSent({ [user._id]: "Friend Request sent" }));
+        }
+    }, []);
 
     const { handleFollow, handleCancelFriendRequest, handleUnfollowRequest } =
         useContext(MyContext);

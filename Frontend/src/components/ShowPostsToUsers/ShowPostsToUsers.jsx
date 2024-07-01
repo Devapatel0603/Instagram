@@ -49,7 +49,6 @@ const ShowPostsToUsers = () => {
                                         image={post.user.profile_img}
                                     />
                                 </NavLink>
-                                {/* <div className="allPosts min-h-0 min-w-0 flex justify-center items-center"> */}
                                 <div className="allPosts w-[500px] h-[500px] flex justify-center items-center">
                                     <Post postUrls={post.urls} />
                                 </div>
@@ -90,10 +89,10 @@ const ShowPostsToUsers = () => {
                     <HandleNoFollowingPosts />
                     {posts &&
                         posts.length > 0 &&
-                        posts.map((post) => (
+                        posts.map((post, index) => (
                             <div
                                 className="post mb-5 max-[640px]:w-full sm:w-[92.5%] min-[1500px]:w-[700px]"
-                                key={post._id}
+                                key={index}
                             >
                                 <NavLink
                                     to={post.user.username}

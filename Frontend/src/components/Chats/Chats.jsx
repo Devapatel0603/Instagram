@@ -6,7 +6,7 @@ import {
     InstagramInfoIcon,
     InstagramGalaryIcon,
 } from "../InstagramIcons/InstagramIcons";
-import NewMessageDialogBox from "../NewMessageDialogBox/NewMessageDialogBox";
+import NewMessageDialogBox from "../DialogBoxes/NewMessageDialogBox";
 import { MyContext } from "../../context/MyContext";
 import { SocketContext } from "../../socket.io";
 import {

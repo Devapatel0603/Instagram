@@ -4,7 +4,7 @@ import {
     InstagramRightArrow,
 } from "../InstagramIcons/InstagramIcons";
 
-const Post = ({ postUrls }) => {
+const Post = ({ postUrls, noBorder = false, noNumber = false }) => {
     const [postIndex, setPostIndex] = useState(0);
     const carouselRef = useRef(null);
     const startX = useRef(0);
@@ -13,13 +13,11 @@ const Post = ({ postUrls }) => {
     const videoRef = useRef(null);
 
     const onTouchStart = (e) => {
-        e.preventDefault();
         startX.current = e.touches[0].clientX;
         isDragging.current = true;
     };
 
     const onTouchMove = (e) => {
-        e.preventDefault();
         if (!isDragging.current) {
             return;
         }
@@ -27,7 +25,6 @@ const Post = ({ postUrls }) => {
     };
 
     const onTouchEnd = (e) => {
-        e.preventDefault();
         if (!isDragging.current) {
             return;
         }
@@ -36,9 +33,9 @@ const Post = ({ postUrls }) => {
         const distance = currentX.current - startX.current;
 
         if (distance > 40 && postIndex > 0) {
-            setPostIndex(postIndex - 1); // Swipe right
+            setPostIndex(postIndex - 1);
         } else if (distance < -40 && postIndex < postUrls.length - 1) {
-            setPostIndex(postIndex + 1); // Swipe left
+            setPostIndex(postIndex + 1);
         }
     };
 
@@ -49,7 +46,6 @@ const Post = ({ postUrls }) => {
     };
 
     const onMouseMove = (e) => {
-        e.preventDefault();
         if (!isDragging.current) {
             return;
         }
@@ -57,7 +53,6 @@ const Post = ({ postUrls }) => {
     };
 
     const onMouseEnd = (e) => {
-        e.preventDefault();
         if (!isDragging.current) {
             return;
         }
@@ -91,21 +86,18 @@ const Post = ({ postUrls }) => {
     };
 
     const handleVideoClick = (e) => {
-        e.preventDefault();
         if (videoRef.current) {
             videoRef.current.muted = !videoRef.current.muted;
         }
     };
 
     const handleVideoHoldStart = (e) => {
-        e.preventDefault();
         if (videoRef.current) {
             videoRef.current.pause();
         }
     };
 
     const handleVideoHoldEnd = (e) => {
-        e.preventDefault();
         if (videoRef.current) {
             videoRef.current.play();
         }
@@ -131,17 +123,26 @@ const Post = ({ postUrls }) => {
         }
         return (
             <img
-                key={url}
                 src={url}
                 alt=""
+                key={url}
                 className="w-full h-full object-contain"
             />
         );
     };
 
     return (
-        <div className="grid place-items-center border-[rgb(54,54,54)] border-[0.4px] overflow-hidden w-full max-w-[500px] h-[400px]">
+        <div
+            className={`grid place-items-center border-[rgb(54,54,54)] ${
+                !noBorder && "border-[0.4px]"
+            } overflow-hidden w-full max-w-[500px] h-[400px]`}
+        >
             <div className="w-full h-full relative">
+                {!noNumber && (
+                    <p className="absolute top-2 right-2 z-10 bg-[rgba(0,0,0,0.68)] px-2 py-1 rounded-xl">
+                        {postIndex + 1 + "/" + postUrls.length}
+                    </p>
+                )}
                 <div
                     className="flex items-center h-full w-full"
                     style={{
@@ -157,9 +158,9 @@ const Post = ({ postUrls }) => {
                     onMouseUp={onMouseEnd}
                     onMouseLeave={onMouseEnd}
                 >
-                    {postUrls.map((url) => (
-                        <>{postUrls.map((url) => renderMedia(url))}</>
-                    ))}
+                    {postUrls.map((url) =>
+                        postUrls.map((url) => renderMedia(url))
+                    )}
                 </div>
                 {postUrls.length > 1 && (
                     <>

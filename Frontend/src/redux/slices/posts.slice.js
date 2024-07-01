@@ -8,7 +8,6 @@ const postsSlice = createSlice({
         followingPosts: [],
         currentUserPosts: [],
         userPosts: [],
-        noOfLikes: {},
         savedPosts: [],
         infiniteScrollLoading: false,
     },
@@ -43,22 +42,18 @@ const postsSlice = createSlice({
             state.userPosts = action.payload;
         },
 
-        //For noOfLikes
-        setNoOfLikes: (state, action) => {
-            state.noOfLikes = { ...state.noOfLikes, ...action.payload };
-        },
-
         //For savedPosts
         setSavedPosts: (state, action) => {
             if (Array.isArray(action.payload)) {
-                state.savedPosts = state.savedPosts.concat(action.payload);
+                state.savedPosts = action.payload;
             } else {
-                state.savedPosts.push(action.payload);
+                state.savedPosts = [action.payload, ...state.savedPosts];
             }
         },
+
         removeSavedPosts: (state, action) => {
             state.savedPosts = state.savedPosts.filter(
-                (_id) => _id.toString() !== action.payload.toString()
+                (post) => post._id.toString() !== action.payload.toString()
             );
         },
     },

@@ -37,7 +37,7 @@ router.route("/edit/username").put(isLoggedin, editUserName);
 //Get Perticular User Data
 router.route("/get/user/data/:username").get(isLoggedin, getPerticularUserData);
 
-//Get users
+//Get users by search
 router.route("").get(getUsers);
 
 // router.post("/upload", isLoggedin, upload.array("imgs"), async (req, res) => {

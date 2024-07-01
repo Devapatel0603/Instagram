@@ -8,7 +8,7 @@ const savedPostsSchema = new mongoose.Schema(
             required: true,
         },
         posts: {
-            type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
+            type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Posts" }],
         },
     },
     { timestamps: true }

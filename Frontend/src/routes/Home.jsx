@@ -63,7 +63,7 @@ const Home = () => {
                     style={{ height: "calc(100vh - 50px)" }}
                     ref={scrollContainerRef}
                 >
-                    <div className="story border-[rgb(54,54,54)] max-[639px]:border-b-[1.3px] h-[83px] w-full pl-1 sm:pl-4 mb-[6px]">
+                    <div className="story border-[rgb(54,54,54)] max-[639px]:border-b-[1.3px] h-[100px] w-full pl-1 sm:pl-4 mb-[6px]">
                         <Story />
                     </div>
                     <div className="posts lg:px-[70px] flex justify-center items-center">

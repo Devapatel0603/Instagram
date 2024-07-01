@@ -11,9 +11,8 @@ import { useSelector } from "react-redux";
 import { MyContext } from "../../context/MyContext";
 
 const LikeCommentShareSaved = ({ _id }) => {
-    const { posts, followingPosts, userPosts, savedPosts } = useSelector(
-        (state) => state.posts
-    );
+    const { posts, followingPosts, userPosts, savedPosts, currentUserPosts } =
+        useSelector((state) => state.posts);
 
     const { addLike, removeLike, removeSaved, addSaved } =
         useContext(MyContext);
@@ -42,7 +41,37 @@ const LikeCommentShareSaved = ({ _id }) => {
                 setLike(true);
             }
         }
-    }, [posts, followingPosts, _id, user._id]);
+
+        if (Array.isArray(currentUserPosts) && currentUserPosts.length > 0) {
+            const post = currentUserPosts.find(
+                (post) => post._id.toString() === _id.toString()
+            );
+
+            if (post && post.likes.includes(user._id)) {
+                setLike(true);
+            }
+        }
+
+        if (Array.isArray(userPosts) && userPosts.length > 0) {
+            const post = userPosts.find(
+                (post) => post._id.toString() === _id.toString()
+            );
+
+            if (post && post.likes.includes(user._id)) {
+                setLike(true);
+            }
+        }
+
+        if (Array.isArray(savedPosts) && savedPosts.length > 0) {
+            const post = savedPosts.find(
+                (post) => post._id.toString() === _id.toString()
+            );
+
+            if (post && post.likes.includes(user._id)) {
+                setLike(true);
+            }
+        }
+    }, [posts, followingPosts, _id, userPosts, currentUserPosts, savedPosts]);
 
     useEffect(() => {
         if (Array.isArray(savedPosts) && savedPosts.length > 0) {

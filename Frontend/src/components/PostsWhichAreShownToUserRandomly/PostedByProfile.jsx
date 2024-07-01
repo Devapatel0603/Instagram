@@ -2,10 +2,12 @@ import React from "react";
 import Image from "../Image/Image";
 import { InstagramMoreThreeDots } from "../InstagramIcons/InstagramIcons";
 
-const PostedByProfile = ({ username, time, image }) => {
+const PostedByProfile = ({ username, time, image, newClasses = "" }) => {
     return (
         <>
-            <div className="postedByProfile h-full flex justify-between items-center pr-1 pl-1">
+            <div
+                className={`postedByProfile h-full flex justify-between items-center pr-1 pl-1 ${newClasses}`}
+            >
                 <div className="postProfileCard flex items-center">
                     <div className="image">
                         <Image

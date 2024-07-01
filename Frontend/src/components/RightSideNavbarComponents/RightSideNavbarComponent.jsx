@@ -25,9 +25,10 @@ const RightSideNavbarComponent = () => {
                     {suggetionProfiles &&
                         suggetionProfiles.map((profile) => (
                             <ProfileCard
-                                key={profile.username}
-                                link={`/${profile.username}`}
-                                user={profile}
+                                key={profile.user.username}
+                                link={`/${profile.user.username}`}
+                                user={profile.user}
+                                requested={profile.requested}
                                 follow="follow"
                             />
                         ))}

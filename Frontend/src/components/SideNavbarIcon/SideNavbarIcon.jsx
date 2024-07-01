@@ -18,7 +18,7 @@ const SideNavbarIcon = ({
                     <Image
                         image={image}
                         alt="Profile Image"
-                        addClasses="h-[24px] w-[24px] md:h-6 md:w-6"
+                        addClasses="h-[36px] w-[36px] md:h-6 md:w-6"
                     />
                 ) : (
                     RenderIconComponent && <RenderIconComponent />
