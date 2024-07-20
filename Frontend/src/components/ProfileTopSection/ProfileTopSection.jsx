@@ -6,6 +6,7 @@ import {
     InstagramSetting,
     InstagramPlusSign,
 } from "../InstagramIcons/InstagramIcons";
+import { NavLink } from "react-router-dom";
 
 const ProfileTopSection = ({ user }) => {
     return (
@@ -35,9 +36,12 @@ const ProfileTopSection = ({ user }) => {
                             >
                                 View Archive
                             </button>
-                            <div className="setting-icon cursor-pointer">
+                            <NavLink
+                                to="../settings"
+                                className="setting-icon cursor-pointer hidden md:block"
+                            >
                                 <InstagramSetting />
-                            </div>
+                            </NavLink>
                         </div>
                         <div className="responsive-btn">
                             <button

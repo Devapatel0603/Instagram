@@ -31,7 +31,7 @@ const Chats = () => {
 
     const { dialogBox, getChatDetails, getMessages } = useContext(MyContext);
 
-    const socket = useContext(SocketContext);
+    const { socket } = useContext(SocketContext);
 
     const { _id } = useParams();
 

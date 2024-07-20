@@ -104,6 +104,33 @@ export const MyContextProvider = ({ children }) => {
         }
     };
 
+    //Edit user privacy
+    const handlePrivacy = async (privacy) => {
+        try {
+            const res = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/users/privacy`,
+                { privacy },
+                { withCredentials: true }
+            );
+            if (res.status === 200) {
+                if (
+                    res.data.data.is_private_account !== user.is_private_account
+                ) {
+                    const updatedUser = {
+                        ...user,
+                        is_private_account: res.data.data.is_private_account,
+                    };
+                    dispatch(setUser(updatedUser));
+                    toast.success("Privacy changed successfully");
+                }
+            }
+        } catch (error) {
+            toast.error(
+                error?.response?.data?.message || "Something went wrong"
+            );
+        }
+    };
+
     //Fetch posts for Home page
     const fetchPosts = async () => {
         dispatch(setInfiniteScrollLoading(true));
@@ -167,10 +194,7 @@ export const MyContextProvider = ({ children }) => {
                             ? res.data.data
                             : post
                     );
-                    console.log(savedPosts);
-                    console.log(newSavedPosts);
                     dispatch(setSavedPosts(newSavedPosts));
-                    console.log(savedPosts);
                 }
             }
         } catch (error) {
@@ -324,7 +348,9 @@ export const MyContextProvider = ({ children }) => {
                 dispatch(setFollowRequests(res.data.data));
             }
         } catch (error) {
-            console.log(error);
+            toast.error(
+                error?.response?.data?.message || "Something went wrong"
+            );
         }
     };
 
@@ -430,6 +456,28 @@ export const MyContextProvider = ({ children }) => {
         }
     };
 
+    //Logout
+    const handleLogout = async (navigate, setLoading) => {
+        setLoading(true);
+        try {
+            const res = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/users/logout`,
+                {},
+                { withCredentials: true }
+            );
+            if (res.status === 200) {
+                navigate("/");
+                dispatch(setUser());
+                toast.success("Logout Successfully");
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error("Something went wrong");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <MyContext.Provider
             value={{
@@ -441,6 +489,7 @@ export const MyContextProvider = ({ children }) => {
                 handleFollow,
                 handleCancelFriendRequest,
                 handleUnfollowRequest,
+                handlePrivacy,
                 getChats,
                 getSuggetions,
                 getFollowRequests,
@@ -455,6 +504,7 @@ export const MyContextProvider = ({ children }) => {
                 getSavedPosts,
                 addSaved,
                 removeSaved,
+                handleLogout,
             }}
         >
             {children}

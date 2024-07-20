@@ -67,6 +67,7 @@ export const login = asyncHandler(async (req, res) => {
         _id: user._id,
         username: user.username,
         name: user.name,
+        is_private_account: user.is_private_account,
         profile_img: user.profile_img,
         number_of_posts: user.number_of_posts,
         number_of_followers: user.number_of_followers,
@@ -159,6 +160,7 @@ export const register = asyncHandler(async (req, res) => {
         _id: user._id,
         username: user.username,
         name: user.name,
+        is_private_account: user.is_private_account,
         profile_img: user.profile_img,
         number_of_posts: user.number_of_posts,
         number_of_followers: user.number_of_followers,
@@ -196,11 +198,10 @@ export const editProfileImage = asyncHandler(async (req, res) => {
     if (!req.file) {
         throw new ErrorHandler(400, "Please upload image");
     }
-    const user = await User.findById(req.user._id);
+    const user = req.user;
     if (!user) {
         throw new ErrorHandler(400, "User not found");
     }
-    // console.log(req.file);
 
     let url;
     url = await uploadImage(req.file);
@@ -212,6 +213,29 @@ export const editProfileImage = asyncHandler(async (req, res) => {
 
     // const { base64Image, contentType } = response.data.data;
     // setImageSrc(`data:${contentType};base64,${base64Image}`);
+});
+
+//Edit Privacy Image
+export const editPrivacy = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id);
+    const { privacy } = req.body;
+
+    if (!user) {
+        throw new ErrorHandler(400, "User not found");
+    }
+
+    if (!privacy) {
+        throw new ErrorHandler(400, "Please, provide all details");
+    }
+
+    console.log("Hello");
+
+    user.is_private_account =
+        privacy.toLowerCase() === "private" ? true : false;
+
+    user.save();
+
+    responseHandler(res, 200, "Privacy changed successfully", user);
 });
 
 //Edit Username

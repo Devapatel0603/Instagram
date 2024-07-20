@@ -63,7 +63,6 @@ export const InstagramHome = () => {
                     strokeWidth="2"
                 ></path>
             </svg>
-            ;
         </>
     );
 };
@@ -120,7 +119,6 @@ export const InstagramSearch = () => {
                     y2="21.643"
                 ></line>
             </svg>
-            ;
         </>
     );
 };
@@ -1103,6 +1101,143 @@ export const InstagramMultiPostIcon = () => {
             >
                 <title>Carousel</title>
                 <path d="M34.8 29.7V11c0-2.9-2.3-5.2-5.2-5.2H11c-2.9 0-5.2 2.3-5.2 5.2v18.7c0 2.9 2.3 5.2 5.2 5.2h18.7c2.8-.1 5.1-2.4 5.1-5.2zM39.2 15v16.1c0 4.5-3.7 8.2-8.2 8.2H14.9c-.6 0-.9.7-.5 1.1 1 1.1 2.4 1.8 4.1 1.8h13.4c5.7 0 10.3-4.6 10.3-10.3V18.5c0-1.6-.7-3.1-1.8-4.1-.5-.4-1.2 0-1.2.6z"></path>
+            </svg>
+        </>
+    );
+};
+
+export const InstagramLogout = () => {
+    return (
+        <>
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                style={{
+                    fill: "currentColor",
+                    transform: "",
+                    msFilter: "",
+                }}
+            >
+                <path d="M16 13v-2H7V8l-5 4 5 4v-3z"></path>
+                <path d="M20 3h-9c-1.103 0-2 .897-2 2v4h2V5h9v14h-9v-4H9v4c0 1.103.897 2 2 2h9c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2z"></path>
+            </svg>
+        </>
+    );
+};
+
+export const InstagramEditProfile = () => {
+    return (
+        <>
+            <svg
+                aria-label=""
+                fill="currentColor"
+                height="24"
+                role="img"
+                viewBox="0 0 24 24"
+                width="24"
+            >
+                <title></title>
+                <circle
+                    cx="12.004"
+                    cy="12.004"
+                    fill="none"
+                    r="10.5"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeMiterlimit="10"
+                    strokeWidth="2"
+                ></circle>
+                <path
+                    d="M18.793 20.014a6.08 6.08 0 0 0-1.778-2.447 3.991 3.991 0 0 0-2.386-.791H9.38a3.994 3.994 0 0 0-2.386.791 6.09 6.09 0 0 0-1.779 2.447"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeMiterlimit="10"
+                    strokeWidth="2"
+                ></path>
+                <circle
+                    cx="12.006"
+                    cy="9.718"
+                    fill="none"
+                    r="4.109"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeMiterlimit="10"
+                    strokeWidth="2"
+                ></circle>
+            </svg>
+        </>
+    );
+};
+
+export const InstagramBell = () => {
+    return (
+        <>
+            <svg
+                aria-label=""
+                fill="currentColor"
+                height="24"
+                role="img"
+                viewBox="0 0 24 24"
+                width="24"
+            >
+                <title></title>
+                <path d="m21.306 14.019-.484-.852A6.358 6.358 0 0 1 20 9.997a7.953 7.953 0 0 0-4.745-7.302 3.971 3.971 0 0 0-6.51.002 7.95 7.95 0 0 0-4.74 7.323 6.337 6.337 0 0 1-.83 3.175l-.468.823a4.001 4.001 0 0 0 3.476 5.983h1.96a3.98 3.98 0 0 0 7.716 0h1.964a4.004 4.004 0 0 0 3.482-5.982Zm-9.304 6.983a1.993 1.993 0 0 1-1.722-1.001h3.444a1.993 1.993 0 0 1-1.722 1.001Zm7.554-3.997a1.986 1.986 0 0 1-1.732.996H6.184a2.002 2.002 0 0 1-1.74-2.993l.47-.822a8.337 8.337 0 0 0 1.093-4.174 5.962 5.962 0 0 1 3.781-5.584.996.996 0 0 0 .494-.426 1.976 1.976 0 0 1 3.439 0 1 1 0 0 0 .494.425 5.989 5.989 0 0 1 3.786 5.634 8.303 8.303 0 0 0 1.082 4.094l.483.852a1.984 1.984 0 0 1-.01 1.998Z"></path>
+            </svg>
+        </>
+    );
+};
+
+export const InstagramLock = () => {
+    return (
+        <>
+            <svg
+                aria-label=""
+                fill="currentColor"
+                height="24"
+                role="img"
+                viewBox="0 0 24 24"
+                width="24"
+            >
+                <title></title>
+                <path
+                    d="M6.71 9.555h10.581a2.044 2.044 0 0 1 2.044 2.044v8.357a2.044 2.044 0 0 1-2.043 2.043H6.71a2.044 2.044 0 0 1-2.044-2.044V11.6A2.044 2.044 0 0 1 6.71 9.555Zm1.07 0V6.222a4.222 4.222 0 0 1 8.444 0v3.333"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                ></path>
+            </svg>
+        </>
+    );
+};
+
+export const InstagramMessager = () => {
+    return (
+        <>
+            <svg
+                aria-label=""
+                fill="currentColor"
+                height="24"
+                role="img"
+                viewBox="0 0 24 24"
+                width="24"
+            >
+                <title></title>
+                <path
+                    d="M12.003 2.001a9.705 9.705 0 1 1 0 19.4 10.876 10.876 0 0 1-2.895-.384.798.798 0 0 0-.533.04l-1.984.876a.801.801 0 0 1-1.123-.708l-.054-1.78a.806.806 0 0 0-.27-.569 9.49 9.49 0 0 1-3.14-7.175 9.65 9.65 0 0 1 10-9.7Z"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeMiterlimit="10"
+                    strokeWidth="1.739"
+                ></path>
+                <path
+                    d="M17.79 10.132a.659.659 0 0 0-.962-.873l-2.556 2.05a.63.63 0 0 1-.758.002L11.06 9.47a1.576 1.576 0 0 0-2.277.42l-2.567 3.98a.659.659 0 0 0 .961.875l2.556-2.049a.63.63 0 0 1 .759-.002l2.452 1.84a1.576 1.576 0 0 0 2.278-.42Z"
+                    fillRule="evenodd"
+                ></path>
             </svg>
         </>
     );

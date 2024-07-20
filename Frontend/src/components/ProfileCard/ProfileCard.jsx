@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { MyContext } from "../../context/MyContext";
 import { setRequestSent } from "../../redux/slices/user.slice";
+import { SocketContext } from "../../socket.io";
 
 const ProfileCard = ({ link, user, follow, requested }) => {
     const { requestSent } = useSelector((state) => state.user);
@@ -15,8 +16,23 @@ const ProfileCard = ({ link, user, follow, requested }) => {
         }
     }, []);
 
+    const socket = useContext(SocketContext);
+
+    const socketHandleFollow = async () => {
+        socket.emit("NEW_FOLLOW_REQUEST", { user });
+    };
+
+    const socketCancelFriendRequest = async () => {
+        socket.emit("CANCEL_FRIEND_REQUEST", { user });
+    };
+
+    const socketUnfollowRequest = async () => {
+        socket.emit("CANCEL_FOLLOW_REQUEST", { user });
+    };
+
     const { handleFollow, handleCancelFriendRequest, handleUnfollowRequest } =
         useContext(MyContext);
+
     return (
         <>
             <div className="profileCard flex w-full justify-between">
@@ -51,11 +67,16 @@ const ProfileCard = ({ link, user, follow, requested }) => {
                                 onClick={
                                     requestSent[user._id] ===
                                     "Friend Request sent"
-                                        ? () =>
+                                        ? () => {
+                                              socketCancelFriendRequest();
                                               handleCancelFriendRequest(
                                                   user._id
-                                              )
-                                        : () => handleUnfollowRequest(user._id)
+                                              );
+                                          }
+                                        : () => {
+                                              socketUnfollowRequest();
+                                              handleUnfollowRequest(user._id);
+                                          }
                                 }
                             >
                                 {requestSent[user._id] === "Friend Request sent"
@@ -65,7 +86,10 @@ const ProfileCard = ({ link, user, follow, requested }) => {
                         ) : (
                             <button
                                 className="text-blue-400 text-[12px]"
-                                onClick={() => handleFollow(user._id)}
+                                onClick={() => {
+                                    socketHandleFollow();
+                                    handleFollow(user._id);
+                                }}
                             >
                                 Follow
                             </button>

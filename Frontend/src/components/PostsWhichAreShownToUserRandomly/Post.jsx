@@ -118,6 +118,7 @@ const Post = ({ postUrls, noBorder = false, noNumber = false }) => {
                     onMouseLeave={handleVideoHoldEnd}
                     onTouchStart={handleVideoHoldStart}
                     onTouchEnd={handleVideoHoldEnd}
+                    autoPlay
                 />
             );
         }

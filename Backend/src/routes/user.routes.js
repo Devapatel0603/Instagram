@@ -8,6 +8,7 @@ import {
     editUserName,
     getUsers,
     getPerticularUserData,
+    editPrivacy,
 } from "../controllers/user.controller.js";
 import { isLoggedin } from "../middlewares/isLoggedin.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -22,6 +23,9 @@ router.route("/login").post(login);
 
 //User logout
 router.route("/logout").post(isLoggedin, logout);
+
+//Edit user privacy
+router.route("/privacy").post(isLoggedin, editPrivacy);
 
 //Get current User Data
 router.route("/getuser").get(getUserData);
@@ -39,21 +43,5 @@ router.route("/get/user/data/:username").get(isLoggedin, getPerticularUserData);
 
 //Get users by search
 router.route("").get(getUsers);
-
-// router.post("/upload", isLoggedin, upload.array("imgs"), async (req, res) => {
-//     let urls = [];
-
-//     try {
-//         for (const file of req.files) {
-//             urls.push(await uploadImage(file));
-//         }
-
-//         res.json({ success: true, urls });
-//     } catch (err) {
-//         console.log(err);
-//     } finally {
-//         req.file = null;
-//     }
-// });
 
 export default router;

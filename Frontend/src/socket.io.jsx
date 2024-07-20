@@ -1,5 +1,7 @@
 import { createContext, useMemo } from "react";
 import io from "socket.io-client";
+import { setFollowRequests } from "./redux/slices/user.slice";
+import { useDispatch, useSelector } from "react-redux";
 
 const SocketContext = createContext();
 

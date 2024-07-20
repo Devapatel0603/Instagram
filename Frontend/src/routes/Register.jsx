@@ -42,11 +42,13 @@ const Register = () => {
             if (res.status == 201) {
                 dispatch(setUser(res.data.data));
                 navigate("/");
-                toast("Login successful");
+                toast.success("Login successful");
                 setLoading(false);
             }
         } catch (error) {
-            console.log(error);
+            console.log(error.response.data.message || "Something went wrong");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -136,10 +138,10 @@ const Register = () => {
                                         Sign Up
                                     </button>
                                 ) : (
-                                    <div class="flex items-center justify-center hover:bg-[rgb(0,120,255)">
-                                        <div class="relative">
-                                            <div class="h-10 w-10 rounded-full border-t-8 border-b-8 border-gray-200"></div>
-                                            <div class="absolute top-0 left-0 h-10 w-10 rounded-full border-t-8 border-b-8 border-[rgb(0,120,255)] animate-spin"></div>
+                                    <div className="flex items-center justify-center hover:bg-[rgb(0,120,255)">
+                                        <div className="relative">
+                                            <div className="h-10 w-10 rounded-full border-t-8 border-b-8 border-gray-200"></div>
+                                            <div className="absolute top-0 left-0 h-10 w-10 rounded-full border-t-8 border-b-8 border-[rgb(0,120,255)] animate-spin"></div>
                                         </div>
                                     </div>
                                 )}

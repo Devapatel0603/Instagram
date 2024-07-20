@@ -201,7 +201,7 @@ export const getFollowingSuggetions = asyncHandler(async (req, res) => {
         // Populate the user details for each user in the suggestions
         const populatedUsers = await UserFollower.populate(users, {
             path: "user",
-            select: "name username email profile_img",
+            select: "name username email profile_img is_private_account",
         });
 
         // Filter out duplicate users
@@ -221,8 +221,6 @@ export const getFollowingSuggetions = asyncHandler(async (req, res) => {
                 requested,
             };
         });
-
-        console.log(uniqueUsers);
 
         // Send the response
         responseHandler(

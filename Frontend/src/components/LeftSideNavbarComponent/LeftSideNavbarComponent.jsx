@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import SideNavbarIcon from "../SideNavbarIcon/SideNavbarIcon";
@@ -21,11 +21,13 @@ import {
     InstagramSearch,
     InstagramLogo,
 } from "../InstagramIcons/InstagramIcons";
-import profileImage from "../../assets/imga.jpeg";
+import SettingDialogBox from "../DialogBoxes/SettingDialogBox";
 
 const LeftSideNavbarComponent = () => {
     const location = useLocation();
     const currentPath = location.pathname;
+    const dialogRef = useRef();
+    const [dialog, setDialog] = useState(false);
 
     const { user } = useSelector((state) => state.user);
 
@@ -109,6 +111,16 @@ const LeftSideNavbarComponent = () => {
         },
     ];
 
+    const handleDialog = () => {
+        if (!dialog) {
+            dialogRef.current.show();
+            setDialog(true);
+        } else {
+            dialogRef.current.close();
+            setDialog(false);
+        }
+    };
+
     return (
         <>
             <div className="leftSideNavbar bg-black border-[rgb(54,54,54)] flex-col h-dvh fixed left-0 top-0 items-center border-r-[0.4px] min-w-0 pt-10 hidden md:flex z-10">
@@ -156,7 +168,14 @@ const LeftSideNavbarComponent = () => {
                         </NavLink>
                     ))}
                 </div>
-                <button className="flex items-center min-w-[60px] h-[50px] w-full max-[767px]:justify-center hover:bg-[rgba(52,50,50,0.42)] px-3">
+
+                <button
+                    className="flex items-center min-w-[60px] h-[50px] w-full max-[767px]:justify-center hover:bg-[rgba(52,50,50,0.42)] px-3"
+                    onClick={handleDialog}
+                >
+                    <dialog ref={dialogRef}>
+                        <SettingDialogBox />
+                    </dialog>
                     <div className="flex justify-center items-center w-full h-full min-[1200px]:w-[40px]">
                         <InstagramMore />
                     </div>

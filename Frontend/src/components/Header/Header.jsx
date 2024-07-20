@@ -5,6 +5,7 @@ import {
     InstagramNotification,
     InstagramActiveNotification,
     InstagramCreatePost,
+    InstagramSetting,
 } from "../InstagramIcons/InstagramIcons";
 import SideNavbarIcon from "../SideNavbarIcon/SideNavbarIcon";
 
@@ -28,6 +29,9 @@ const Header = () => {
                 <div className="leftHeader instaSVG w-full justify-start flex">
                     <InstagramSVG />
                 </div>
+                <NavLink to="settings" className="setting fixed top-3 left-4">
+                    <InstagramSetting />
+                </NavLink>
                 <div className="rightHeader flex gap-4 pr-4">
                     {icons.map((ni) => (
                         <NavLink

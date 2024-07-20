@@ -22,11 +22,19 @@ import { MyContext } from "./context/MyContext";
 import { SocketContext } from "./socket.io";
 import { setAllChats } from "./redux/slices/chat.slice";
 import { useAsyncEffect } from "react-dynamic-hooks";
+import Settings from "./routes/Settings";
+import {
+    setFollowings,
+    setFollowRequests,
+    setUser,
+} from "./redux/slices/user.slice";
 
 function App() {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
-    const { user } = useSelector((state) => state.user);
+    const { user, followRequests, followings } = useSelector(
+        (state) => state.user
+    );
     const { page } = useSelector((state) => state.posts);
     const { isChatCreated, allChats } = useSelector((state) => state.chat);
 
@@ -96,6 +104,46 @@ function App() {
         };
     }, [socket, dispatch, allChats]);
 
+    useEffect(() => {
+        if (user) {
+            socket.emit("JOIN", { userId: user._id });
+
+            const handleFriendRequests = ({ user: sentUser }) => {
+                const updatedFollowRequests = [sentUser, ...followRequests];
+                dispatch(setFollowRequests(updatedFollowRequests));
+            };
+
+            socket.on("NEW_FOLLOW_REQUEST", handleFriendRequests);
+
+            const handleCancelFriendRequests = ({ user: sentUser }) => {
+                const updatedFollowRequests = followRequests.filter(
+                    (request) =>
+                        request._id.toString() !== sentUser._id.toString()
+                );
+                dispatch(setFollowRequests(updatedFollowRequests));
+            };
+
+            socket.on("CANCEL_FRIEND_REQUEST", handleCancelFriendRequests);
+
+            const handleCancelFollowRequests = ({ user: sentUser }) => {
+                const updatedFollowings = followings.filter(
+                    (following) =>
+                        following._id.toString() !== sentUser._id.toString()
+                );
+
+                const updatedUser = {
+                    ...user,
+                    number_of_following: updatedFollowings.length,
+                };
+
+                dispatch(setUser(updatedUser));
+                dispatch(setFollowings(updatedFollowings));
+            };
+
+            socket.on("CANCEL_FOLLOW_REQUEST", handleCancelFollowRequests);
+        }
+    }, [socket, followRequests, user]);
+
     return (
         <>
             {loading ? (
@@ -154,6 +202,16 @@ function App() {
                             element={
                                 user ? (
                                     <Notifications />
+                                ) : (
+                                    <Navigate to="/" replace={true} />
+                                )
+                            }
+                        />
+                        <Route
+                            path="settings"
+                            element={
+                                user ? (
+                                    <Settings />
                                 ) : (
                                     <Navigate to="/" replace={true} />
                                 )

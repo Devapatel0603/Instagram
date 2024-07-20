@@ -34,24 +34,12 @@ io.on("connection", (socket) => {
     const user = socket.user;
     console.log("User Connected", socket.id);
 
-    socket.on(ALERT, () => {
-        console.log("ALERT event received");
-    });
-
-    socket.on(FETCH_CHATS, () => {
-        console.log("FETCH_CHATS event received");
-    });
-
-    socket.on(NEW_ATTACHMENTS, () => {
-        console.log("NEW_ATTACHMENTS event received");
-    });
-
     socket.on("JOIN_CHAT", ({ userId, chatId }) => {
         socket.join(chatId);
         console.log("Join chat executed");
     });
 
-    socket.on(NEW_MESSAGE, async ({ chatId, message }) => {
+    socket.on("NEW_MESSAGE", async ({ chatId, message }) => {
         const messageForDB = {
             sender: user._id,
             chat: chatId,
@@ -71,12 +59,42 @@ io.on("connection", (socket) => {
             createdAt: new Date().toISOString(),
         };
 
-        io.in(chatId).emit(NEW_MESSAGE, messageForRealTime);
-        io.in(chatId).emit(NEW_MESSAGE_ALERT, { chatId });
+        io.in(chatId).emit("NEW_MESSAGE", messageForRealTime);
+        io.in(chatId).emit("NEW_MESSAGE_ALERT", { chatId });
     });
 
-    socket.on(NEW_FOLLOW_REQUEST, () => {
-        console.log("NEW_FOLLOW_REQUEST event received");
+    socket.on("JOIN", ({ userId }) => {
+        socket.join(userId);
+    });
+
+    socket.on("NEW_FOLLOW_REQUEST", ({ user }) => {
+        if (user.is_private_account) {
+            io.in(user._id).emit("NEW_FOLLOW_REQUEST", { user });
+        }
+    });
+
+    socket.on("CANCEL_FRIEND_REQUEST", ({ user }) => {
+        if (user.is_private_account) {
+            io.in(user._id).emit("CANCEL_FRIEND_REQUEST", { user });
+        }
+    });
+
+    socket.on("CANCEL_FOLLOW_REQUEST", ({ user }) => {
+        if (!user.is_private_account) {
+            io.in(user._id).emit("CANCEL_FOLLOW_REQUEST", { user });
+        }
+    });
+
+    socket.on(ALERT, () => {
+        console.log("ALERT event received");
+    });
+
+    socket.on(FETCH_CHATS, () => {
+        console.log("FETCH_CHATS event received");
+    });
+
+    socket.on(NEW_ATTACHMENTS, () => {
+        console.log("NEW_ATTACHMENTS event received");
     });
 
     socket.on(CANCEL_FOLLOW_REQUEST, () => {
