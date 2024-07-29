@@ -11,7 +11,7 @@ import { NavLink } from "react-router-dom";
 const ProfileTopSection = ({ user }) => {
     return (
         <>
-            <div className="profile-top-section w-[91%] min-[900px]:w-[80%] border-[rgb(54,54,54)] border-b-[1px] flex items-center flex-col">
+            <div className="profile-top-section w-[100%] min-[900px]:w-[80%] border-[rgb(54,54,54)] border-b-[1px] flex items-center flex-col">
                 <div className="flex w-[90%] justify-between">
                     <div className="profile-top-section-image-container w-[150px] h-[150px]">
                         <Image
@@ -61,22 +61,15 @@ const ProfileTopSection = ({ user }) => {
                             <p className="posts">
                                 {user.number_of_posts} posts
                             </p>
-                            <p className="followers">
+                            <NavLink to="followers" className="followers">
                                 {user.number_of_followers} followers
-                            </p>
-                            <p className="following">
+                            </NavLink>
+                            <NavLink className="following">
                                 {user.number_of_following} following
-                            </p>
+                            </NavLink>
                         </div>
                         <p className="name">{user.name}</p>
                         <p className="name">{user?.description}</p>
-                    </div>
-                </div>
-                <div className="create-post w-full mt-14">
-                    <div className="outer w-[90px] h-[90px] grid place-items-center rounded-full border-[rgb(54,54,54)] border-[2px] cursor-pointer">
-                        <div className="plus-symbol w-[85px] h-[85px] grid place-items-center rounded-full border-black border-[2px] bg-[rgb(18,18,18)]">
-                            <InstagramPlusSign />
-                        </div>
                     </div>
                 </div>
             </div>

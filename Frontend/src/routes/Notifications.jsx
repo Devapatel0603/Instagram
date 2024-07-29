@@ -33,7 +33,7 @@ const Notifications = () => {
                         >
                             <ShowFriendRequests />
                         </div>
-                        <div className="friend-requests w-full flex justify-center items-center">
+                        <div className="w-full flex justify-center items-center">
                             <OtherNotifications />
                         </div>
                     </>

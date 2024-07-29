@@ -4,6 +4,7 @@ import { app } from "./app.js";
 import dotenv from "dotenv";
 import { socketLoggedin } from "./middlewares/isLoggedin.middleware.js";
 import { Message } from "./models/message.model.js";
+import { Notification } from "./models/notification.model.js";
 
 dotenv.config({
     path: "./.env",
@@ -32,7 +33,7 @@ io.use((socket, next) => {
 
 io.on("connection", (socket) => {
     const user = socket.user;
-    console.log("User Connected", socket.id);
+    console.log("User Connected", socket.id, socket.user);
 
     socket.on("JOIN_CHAT", ({ userId, chatId }) => {
         socket.join(chatId);
@@ -67,9 +68,24 @@ io.on("connection", (socket) => {
         socket.join(userId);
     });
 
-    socket.on("NEW_FOLLOW_REQUEST", ({ user }) => {
+    socket.on("NEW_FOLLOW_REQUEST", async ({ user }) => {
         if (user.is_private_account) {
-            io.in(user._id).emit("NEW_FOLLOW_REQUEST", { user });
+            io.in(user._id).emit("NEW_FOLLOW_REQUEST", { user: socket.user });
+        } else {
+            let notification = await Notification.create({
+                user: user._id,
+                notificationUser: socket.user._id,
+                text: "added you as a friend",
+            });
+
+            notification = await notification.populate(
+                "notificationUser",
+                "name username profile_img"
+            );
+
+            io.in(user._id).emit("NEW_FOLLOWER", {
+                notification,
+            });
         }
     });
 

@@ -14,7 +14,6 @@ import ProfileTagged from "./components/ProfileTagged/ProfileTagged";
 import Register from "./routes/Register";
 import Login from "./routes/Login";
 import StartingLoader from "./components/Loaders/StartingLoader";
-import Create from "./routes/Create";
 import Notifications from "./routes/Notifications";
 import DefaultMessagePage from "./components/DefaultMessagePage/DefaultMessagePage";
 import Chats from "./components/Chats/Chats";
@@ -26,13 +25,16 @@ import Settings from "./routes/Settings";
 import {
     setFollowings,
     setFollowRequests,
+    setNotifications,
     setUser,
 } from "./redux/slices/user.slice";
+import Followers from "./routes/Followers";
+import Following from "./routes/Following";
 
 function App() {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
-    const { user, followRequests, followings } = useSelector(
+    const { user, followRequests, followings, notifications } = useSelector(
         (state) => state.user
     );
     const { page } = useSelector((state) => state.posts);
@@ -46,6 +48,7 @@ function App() {
         getCurrentUserPosts,
         fetchPosts,
         getChats,
+        getNotifications,
     } = useContext(MyContext);
 
     // Using custom async effect hook
@@ -59,6 +62,7 @@ function App() {
             await getCurrentUserPosts();
             await getFollowRequests();
             await getSuggetions();
+            await getNotifications();
         }
     }, [user]);
 
@@ -115,7 +119,7 @@ function App() {
 
             socket.on("NEW_FOLLOW_REQUEST", handleFriendRequests);
 
-            const handleCancelFriendRequests = ({ user: sentUser }) => {
+            const handleCancelFriendRequests = ({ r_user: sentUser }) => {
                 const updatedFollowRequests = followRequests.filter(
                     (request) =>
                         request._id.toString() !== sentUser._id.toString()
@@ -141,8 +145,16 @@ function App() {
             };
 
             socket.on("CANCEL_FOLLOW_REQUEST", handleCancelFollowRequests);
+
+            const handleNewFollowerNotifications = ({ user, notification }) => {
+                dispatch(
+                    setNotifications([{ notification, user }, ...notifications])
+                );
+            };
+
+            socket.on("NEW_FOLLOWER", handleNewFollowerNotifications);
         }
-    }, [socket, followRequests, user]);
+    }, [socket, followRequests, user, followings, notifications]);
 
     return (
         <>
@@ -217,38 +229,50 @@ function App() {
                                 )
                             }
                         />
+                        <Route path=":username" element={<Profile />}>
+                            <Route path="" element={<ProfilePost />} />
+                            <Route
+                                path="saved"
+                                element={
+                                    user ? (
+                                        <ProfileSaved />
+                                    ) : (
+                                        <Navigate to="/" replace={true} />
+                                    )
+                                }
+                            />
+                            <Route
+                                path="tagged"
+                                element={
+                                    user ? (
+                                        <ProfileTagged />
+                                    ) : (
+                                        <Navigate to="/" replace={true} />
+                                    )
+                                }
+                            />
+                        </Route>
                         <Route
-                            path="create"
+                            path=":username/followers"
                             element={
                                 user ? (
-                                    <Create />
+                                    <Followers />
                                 ) : (
                                     <Navigate to="/" replace={true} />
                                 )
                             }
                         />
-                        {user && (
-                            <Route
-                                path=":username"
-                                element={
-                                    user ? (
-                                        <Profile />
-                                    ) : (
-                                        <Navigate to="/" replace={true} />
-                                    )
-                                }
-                            >
-                                <Route path="" element={<ProfilePost />} />
-                                <Route
-                                    path="saved"
-                                    element={<ProfileSaved />}
-                                />
-                                <Route
-                                    path="tagged"
-                                    element={<ProfileTagged />}
-                                />
-                            </Route>
-                        )}
+                        <Route
+                            path=":username/followings"
+                            element={
+                                user ? (
+                                    <Following />
+                                ) : (
+                                    <Navigate to="/" replace={true} />
+                                )
+                            }
+                        />
+
                         <Route
                             path="register"
                             element={

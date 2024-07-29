@@ -8,6 +8,7 @@ import {
     deleteRequestSent,
     setFollowRequests,
     setSuggetionProfiles,
+    setNotifications,
 } from "../redux/slices/user.slice";
 import {
     setInfiniteScrollLoading,
@@ -39,6 +40,7 @@ export const MyContextProvider = ({ children }) => {
 
     const [dialogBox, setDialogBox] = useState(false);
     const [postDialogBox, setPostDialogBox] = useState(false);
+    const [newPostDialogBox, setNewPostDialogBox] = useState(false);
 
     //Get current user data
     const getUserDetails = async (setLoading) => {
@@ -128,6 +130,21 @@ export const MyContextProvider = ({ children }) => {
             toast.error(
                 error?.response?.data?.message || "Something went wrong"
             );
+        }
+    };
+
+    //Get all notifications
+    const getNotifications = async () => {
+        try {
+            const res = await axios.get(
+                `${import.meta.env.VITE_BACKEND_URL}/users/notifications`,
+                { withCredentials: true }
+            );
+            if (res.status === 200) {
+                dispatch(setNotifications(res.data.data));
+            }
+        } catch (error) {
+            toast.error("Error in fetching notifications");
         }
     };
 
@@ -484,11 +501,14 @@ export const MyContextProvider = ({ children }) => {
                 postDialogBox,
                 isChatCreated,
                 dialogBox,
+                newPostDialogBox,
+                setNewPostDialogBox,
                 setPostDialogBox,
                 getMessages,
                 handleFollow,
                 handleCancelFriendRequest,
                 handleUnfollowRequest,
+                getNotifications,
                 handlePrivacy,
                 getChats,
                 getSuggetions,

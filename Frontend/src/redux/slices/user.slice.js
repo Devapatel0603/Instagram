@@ -2,7 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const userSlice = createSlice({
     name: "user",
-    initialState: { followRequests: [] },
+    initialState: {
+        followRequests: [],
+        updatedFollowings: [],
+        updatedFollowRequests: [],
+        followings: [],
+        notifications: [],
+    },
     reducers: {
         setUser: (state, action) => {
             state.user = action.payload;
@@ -46,7 +52,7 @@ const userSlice = createSlice({
             state.notifications = action.payload;
 
             state.oldNotificationsCount = state.notifications.filter(
-                (notification) => notification.isRead === false
+                (notification) => notification.isRead === true
             ).length;
 
             state.newNotificationsCount = state.notifications.filter(
@@ -70,5 +76,6 @@ export const {
     setRequestSent,
     setFollowRequests,
     setSuggetionProfiles,
+    setNotifications,
 } = userSlice.actions;
 export default userSlice.reducer;

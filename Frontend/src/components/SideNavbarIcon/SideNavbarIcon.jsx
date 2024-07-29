@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import Image from "../Image/Image";
+import { useSelector } from "react-redux";
 
 const SideNavbarIcon = ({
     name,
@@ -10,6 +11,16 @@ const SideNavbarIcon = ({
     image = null,
 }) => {
     const RenderIconComponent = isActive ? HoverIconComponent : IconComponent;
+
+    const { notifications } = useSelector((state) => state.user);
+
+    useEffect(() => {
+        if (name.toLowerCase() === "notifications") {
+            const unreadNotifications = notifications.filter(
+                (not) => !not.read
+            ).length;
+        }
+    }, []);
 
     return (
         <div className="flex items-start space-x-2 w-full justify-center">

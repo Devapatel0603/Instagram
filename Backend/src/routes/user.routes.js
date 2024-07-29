@@ -9,6 +9,7 @@ import {
     getUsers,
     getPerticularUserData,
     editPrivacy,
+    getNotifications,
 } from "../controllers/user.controller.js";
 import { isLoggedin } from "../middlewares/isLoggedin.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -43,5 +44,8 @@ router.route("/get/user/data/:username").get(isLoggedin, getPerticularUserData);
 
 //Get users by search
 router.route("").get(getUsers);
+
+//Get all notifications
+router.route("/notifications").get(isLoggedin, getNotifications);
 
 export default router;

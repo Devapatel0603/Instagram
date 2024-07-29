@@ -40,7 +40,7 @@ const Profile = () => {
                         <PostDialogBox />
                     </div>
                     <div className="profile bg-black w-dvw h-dvh text-white md:pl-[50px] pt-[50px] md:pt-2 min-[1200px]:pl-64 overflow-auto scrollbar-hide max-[768px]:w-full">
-                        <div className="profile-top min-[1200px]:w-[80dvw] min-[1200px]:float-end h-[69.5dvh] pl-1 sm:pl-4 flex justify-center pt-16">
+                        <div className="profile-top min-[1200px]:w-[80dvw] min-[1200px]:float-end h-[50dvh] pl-1 sm:pl-4 flex justify-center pt-16">
                             <ProfileTopSection
                                 user={
                                     user.username === username

@@ -7,6 +7,7 @@ import { responseHandler } from "../utils/responseHandler.js";
 import { addJwtTokenToCookie } from "../utils/addJwtTokenToCookie.js";
 import { getUserFromJwtToken } from "../utils/getUserFromJwtToken.js";
 import { uploadImage } from "../utils/cloudinary.js";
+import { Notification } from "../models/notification.model.js";
 
 //User Login
 export const login = asyncHandler(async (req, res) => {
@@ -182,15 +183,15 @@ export const getUserData = asyncHandler(async (req, res) => {
 
     if (!token) {
         responseHandler(res, 200, "Not Logged In");
+    } else {
+        const user = await getUserFromJwtToken(token);
+
+        if (user === 400) {
+            responseHandler(res, 200, "Invalid Token");
+        } else {
+            responseHandler(res, 200, "Done", user);
+        }
     }
-
-    const user = await getUserFromJwtToken(token);
-
-    if (user === 400) {
-        responseHandler(res, 200, "Invalid Token");
-    }
-
-    responseHandler(res, 200, "Done", user);
 });
 
 //Edit Profile Image
@@ -333,4 +334,13 @@ export const getUsers = asyncHandler(async (req, res) => {
     }
 
     responseHandler(res, 200, "Users", users);
+});
+
+//Get all notifications
+export const getNotifications = asyncHandler(async (req, res) => {
+    let notifications = await Notification.find({
+        user: req.user._id,
+    }).populate("notificationUser", "name username profile_img");
+
+    responseHandler(res, 200, "Notifications", notifications);
 });

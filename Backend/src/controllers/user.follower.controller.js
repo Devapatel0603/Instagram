@@ -3,6 +3,7 @@ import { ErrorHandler } from "../utils/errorHandler.js";
 import { responseHandler } from "../utils/responseHandler.js";
 import { User } from "../models/user.model.js";
 import { UserFollower } from "../models/user.follower.model.js";
+import { Notification } from "../models/notification.model.js";
 
 //Send Follow request for follow someone
 export const addFollowing = asyncHandler(async (req, res) => {

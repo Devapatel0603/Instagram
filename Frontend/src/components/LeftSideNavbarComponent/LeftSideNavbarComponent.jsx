@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import SideNavbarIcon from "../SideNavbarIcon/SideNavbarIcon";
@@ -22,6 +22,8 @@ import {
     InstagramLogo,
 } from "../InstagramIcons/InstagramIcons";
 import SettingDialogBox from "../DialogBoxes/SettingDialogBox";
+import { MyContext } from "../../context/MyContext";
+import CreatePostDialogBox from "../DialogBoxes/CreatePostDialogBox";
 
 const LeftSideNavbarComponent = () => {
     const location = useLocation();
@@ -30,6 +32,7 @@ const LeftSideNavbarComponent = () => {
     const [dialog, setDialog] = useState(false);
 
     const { user } = useSelector((state) => state.user);
+    const { newPostDialogBox, setNewPostDialogBox } = useContext(MyContext);
 
     const icons = [
         {
@@ -121,8 +124,23 @@ const LeftSideNavbarComponent = () => {
         }
     };
 
+    const handleNewPost = () => {
+        if (newPostDialogBox) {
+            setNewPostDialogBox(false);
+        } else {
+            setNewPostDialogBox(true);
+        }
+    };
+
     return (
         <>
+            <div
+                className={`fixed w-dvw h-dvh bg-black bg-opacity-70 ${
+                    newPostDialogBox ? "grid place-items-center" : "hidden"
+                } `}
+            >
+                <CreatePostDialogBox />
+            </div>
             <div className="leftSideNavbar bg-black border-[rgb(54,54,54)] flex-col h-dvh fixed left-0 top-0 items-center border-r-[0.4px] min-w-0 pt-10 hidden md:flex z-10">
                 {!currentPath.includes("/messages") && (
                     <>
@@ -142,30 +160,59 @@ const LeftSideNavbarComponent = () => {
                 </div>
                 <div className="navlinks grid place-items-start max-[1200px]:place-items-center min-[1200px]:w-full mt-11">
                     {icons.map((ni) => (
-                        <NavLink
-                            key={ni.name}
-                            to={`/${ni.to}`}
-                            className="grid min-w-[60px] h-[50px] place-items-center hover:bg-[rgba(52,50,50,0.42)] px-3 space-x-2"
-                        >
-                            {({ isActive }) => (
-                                <SideNavbarIcon
-                                    name={
-                                        !currentPath.includes("/messages")
-                                            ? ni.name
-                                            : ""
-                                    }
-                                    icon={ni.icon}
-                                    isActive={
-                                        ni.name === "Home"
-                                            ? currentPath === "/" ||
-                                              currentPath === "/home"
-                                            : isActive
-                                    }
-                                    hoverIcon={ni.hoverIcon}
-                                    image={ni.image}
-                                />
+                        <>
+                            {ni.name !== "Create" ? (
+                                <NavLink
+                                    key={ni.name}
+                                    to={`/${ni.to}`}
+                                    className="grid min-w-[60px] h-[50px] place-items-center hover:bg-[rgba(52,50,50,0.42)] px-3 space-x-2"
+                                >
+                                    {({ isActive }) => (
+                                        <SideNavbarIcon
+                                            name={
+                                                !currentPath.includes(
+                                                    "/messages"
+                                                )
+                                                    ? ni.name
+                                                    : ""
+                                            }
+                                            icon={ni.icon}
+                                            isActive={
+                                                ni.name === "Home"
+                                                    ? currentPath === "/" ||
+                                                      currentPath === "/home"
+                                                    : isActive
+                                            }
+                                            hoverIcon={ni.hoverIcon}
+                                            image={ni.image}
+                                        />
+                                    )}
+                                </NavLink>
+                            ) : (
+                                <>
+                                    <div
+                                        className="grid min-w-[60px] h-[50px] place-items-center hover:bg-[rgba(52,50,50,0.42)] px-3 space-x-2 text-white cursor-pointer"
+                                        onClick={handleNewPost}
+                                    >
+                                        <SideNavbarIcon
+                                            name={
+                                                !currentPath.includes(
+                                                    "/messages"
+                                                )
+                                                    ? ni.name
+                                                    : ""
+                                            }
+                                            isActive={
+                                                newPostDialogBox ? true : false
+                                            }
+                                            icon={ni.icon}
+                                            hoverIcon={ni.hoverIcon}
+                                            image={ni.image}
+                                        />
+                                    </div>
+                                </>
                             )}
-                        </NavLink>
+                        </>
                     ))}
                 </div>
 
