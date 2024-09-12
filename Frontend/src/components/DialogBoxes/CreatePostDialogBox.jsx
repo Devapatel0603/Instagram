@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { MyContext } from "../../context/MyContext";
 import { InstagramCrossIcon } from "../InstagramIcons/InstagramIcons";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const CreatePostDialogBox = () => {
     const { newPostDialogBox, setNewPostDialogBox } = useContext(MyContext);
@@ -10,6 +12,38 @@ const CreatePostDialogBox = () => {
 
     const handleFileChange = (event) => {
         setSelectedFiles(event.target.files);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        toast.info("Please wait, your post will be uploaded in short time");
+        try {
+            if (selectedFiles.length >= 1) {
+                const formData = new FormData();
+                formData.append("posts", selectedFiles);
+                setNewPostDialogBox(false);
+                const res = await axios.post(
+                    `${import.meta.env.VITE_BACKEND_URL}/posts/create`,
+                    formData,
+                    {
+                        withCredentials: true,
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
+                    }
+                );
+
+                console.log("res");
+
+                if (res.status === 201) {
+                    toast.success("Your post has been successfully uploaded");
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -31,7 +65,7 @@ const CreatePostDialogBox = () => {
                 >
                     <InstagramCrossIcon />
                 </div>
-                <form action="">
+                <form onSubmit={(e) => handleSubmit(e)}>
                     <input
                         type="file"
                         multiple

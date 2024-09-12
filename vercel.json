@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "build": {
+    "src": ["Backend/**", "!Backend/node_modules/**"],
+    "command": "node Backend/src/index.js"
+  },
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "Backend/index.html"
+    }
+  ]
+}
